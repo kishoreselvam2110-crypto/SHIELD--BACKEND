@@ -33,7 +33,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center px-10 py-6 sticky top-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/5">
+    <nav className="flex justify-between items-center px-10 py-6 sticky top-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/5 glass-card">
       <LinkNext href="/" className="text-2xl font-black tracking-tighter text-white hover:text-indigo-400 transition-colors flex items-center gap-2">
         <Shield className="text-indigo-500" />
         SHIELD<span className="text-indigo-500">AI</span>
@@ -47,7 +47,7 @@ export default function Navbar() {
           whileTap={{ scale: 0.9 }}
           onClick={triggerSOS}
           disabled={sosLoading}
-          className="px-6 py-2 bg-red-600 rounded-full text-white shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2"
+          className="px-6 py-2 bg-red-600 rounded-full text-white shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2 sos-button-boosted"
         >
           {sosLoading ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <div className="w-2 h-2 bg-white rounded-full animate-ping" />}
           Emergency SOS

@@ -410,6 +410,34 @@ app.post("/api/sos", (req, res) => {
 });
 
 /* =======================================================
+   SMART RISK ENGINE (Boosted)
+======================================================= */
+app.post("/api/safety-score", (req, res) => {
+  const { lat, lon, batteryLevel, time } = req.body;
+  let score = 100;
+
+  // 1. Check Geofence Proximity (Minus 15 points if near a danger zone)
+  for (const z of dangerZones) {
+    const d = getDistance(lat, lon, z.lat, z.lon);
+    if (d < z.radius + 1000) score -= 15; // Buffer zone
+  }
+
+  // 2. Battery Impact
+  if (batteryLevel < 20) score -= 30;
+  else if (batteryLevel < 50) score -= 10;
+
+  // 3. Time Impact (Higher risk at night)
+  const hour = new Date(time || Date.now()).getHours();
+  if (hour > 22 || hour < 5) score -= 20;
+
+  res.json({ 
+    success: true, 
+    score: Math.max(0, score),
+    status: score > 80 ? "SECURE" : score > 50 ? "CAUTION" : "HIGH_RISK"
+  });
+});
+
+/* =======================================================
    NEW MODULAR FEATURES: E-FIR & EVIDENCE
 ======================================================= */
 app.post("/api/efir/create", async (req, res) => {

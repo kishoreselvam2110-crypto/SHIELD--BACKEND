@@ -49,9 +49,12 @@ export default function SafetyScore({ lat, lon, batteryLevel = 100, tripStatus =
     <motion.div 
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className="p-6 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 relative overflow-hidden group"
+      className="glass-card p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden group min-w-[280px]"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* HUD Scanline Effect */}
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-20 opacity-20" />
+      
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       
       <div className="relative">
         <svg className="w-24 h-24 transform -rotate-90">
@@ -78,7 +81,7 @@ export default function SafetyScore({ lat, lon, batteryLevel = 100, tripStatus =
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-2xl font-black ${getColor(score)}`}>{score}</span>
+          <span className={`text-4xl font-black ${getColor(score)} drop-shadow-[0_0_10px_currentColor]`}>{score}</span>
         </div>
       </div>
 
