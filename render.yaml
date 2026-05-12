@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: shield-backend
+    env: node
+    plan: free
+    # Fix: Just install (this will trigger the frontend build automatically)
+    buildCommand: npm install --prefix backend
+    # Fix: This is where we start the server
+    startCommand: node backend/server.js
+    staticPublishPath: frontend/dist
+    healthCheckPath: /api/health
