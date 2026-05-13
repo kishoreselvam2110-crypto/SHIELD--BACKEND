@@ -88,9 +88,12 @@ function Navbar() {
     
     const sendSos = async (lat, lon, isSimulated = false) => {
       try {
+        const storedId = localStorage.getItem("shield_id");
+        const userData = storedId ? JSON.parse(storedId) : null;
+        
         const payload = {
-          userId: "me",
-          name: "Live Tourist (Demo Mode)",
+          userId: userData?.publicKey?.slice(0, 8) || "me",
+          name: userData?.name || "Live Tourist (Demo Mode)",
           location: { lat, lon },
           message: isSimulated 
             ? "🚨 SIMULATED SOS: Browser GPS blocked on HTTP. Using Demo Coordinates."

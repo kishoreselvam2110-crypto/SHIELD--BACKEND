@@ -219,25 +219,38 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
         })}
 
         {sosAlerts.map((sos, i) => (
-          <Circle
-            key={`sos-${i}`}
-            center={[sos.lat, sos.lon]}
-            radius={800}
-            pathOptions={{ 
-              color: 'red', 
-              fillColor: '#ef4444', 
-              fillOpacity: 0.3,
-              dashArray: '10, 10',
-              className: 'animate-pulse'
-            }}
-          >
-            <Popup>
-              <div className="text-black text-center">
-                <strong className="block mb-1 text-sm font-black text-red-600">CRITICAL SOS DETECTED</strong>
-                <p className="text-[10px] uppercase tracking-widest text-red-500 font-bold border border-red-500 px-2 py-1 bg-red-500/10 rounded">Emergency Geofence Engaged</p>
-              </div>
-            </Popup>
-          </Circle>
+          <div key={`sos-group-${i}`}>
+            <Circle
+              center={[sos.lat, sos.lon]}
+              radius={800}
+              pathOptions={{ 
+                color: 'red', 
+                fillColor: '#ef4444', 
+                fillOpacity: 0.3,
+                dashArray: '10, 10',
+                className: 'animate-pulse'
+              }}
+            />
+            <Marker 
+              position={[sos.lat, sos.lon]}
+              icon={new L.Icon({
+                iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+                iconSize: [35, 50],
+                iconAnchor: [17, 50],
+              })}
+            >
+              <Popup>
+                <div className="text-black text-center p-2">
+                  <div className="text-[8px] font-black uppercase text-red-600 mb-1 tracking-widest">🚨 SOS DISTRESS SIGNAL</div>
+                  <strong className="block text-lg font-black tracking-tighter uppercase">{sos.name || "Unknown Tourist"}</strong>
+                  <p className="text-[10px] opacity-60 mt-1">{new Date(sos.time).toLocaleTimeString()}</p>
+                  <div className="mt-3 pt-3 border-t border-black/5">
+                    <p className="text-[9px] font-bold text-red-500 uppercase">Emergency Protocol Active</p>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          </div>
         ))}
 
         {wildernessAlerts.map((wa, i) => (

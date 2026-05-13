@@ -32,6 +32,7 @@ export default function DigitalID() {
     try {
       const signedData = await signProfile(form);
       setResult(signedData);
+      localStorage.setItem("shield_id", JSON.stringify(signedData));
     } catch (err) {
       console.error("ID Sign Error:", err);
       setError("Failed to sign ID. Storage access required.");

@@ -251,7 +251,14 @@ export default function AdminDashboard() {
                         </span>
                         <span className="text-[9px] font-mono opacity-30">{new Date(a.time).toLocaleTimeString()}</span>
                       </div>
-                      <p className={`text-sm leading-snug font-bold ${a.type === 'SOS' ? 'text-red-100' : 'text-white/80'}`}>{a.alert || a.message}</p>
+                      <p className={`text-sm leading-snug font-bold ${a.type === 'SOS' ? 'text-red-100' : 'text-white/80'}`}>
+                        {a.type === 'SOS' ? (
+                          <span className="flex flex-col">
+                            <span className="text-xs text-red-400 uppercase tracking-widest mb-1">Distress From: {a.name}</span>
+                            <span>{a.alert || a.message}</span>
+                          </span>
+                        ) : (a.alert || a.message)}
+                      </p>
                       <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
                         <div className="flex justify-between items-center text-[8px] font-black opacity-40 uppercase tracking-widest">
                           <span>Battery: {a.batteryLevel}%</span>
