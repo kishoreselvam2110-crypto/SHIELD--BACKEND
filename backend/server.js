@@ -564,11 +564,18 @@ io.on("connection", (socket) => {
 
 // Serve Static Frontend Files
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "frontend/dist")));
+const distPath = path.join(__dirname, "frontend", "dist");
+console.log("📂 Serving static files from:", distPath);
+app.use(express.static(distPath));
 
 // Catch-all route to serve the Frontend's index.html (MUST BE LAST)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/dist/index.html"));
+  const indexPath = path.join(distPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send(`Frontend build not found at ${indexPath}. Please ensure the build command ran successfully.`);
+  }
 });
 
 const PORT = process.env.PORT || 3000;
