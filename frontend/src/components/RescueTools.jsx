@@ -19,10 +19,9 @@ export default function RescueTools({ selectedTourist, trailHistory = [] }) {
   const [showTrails, setShowTrails] = useState(true);
 
   const generateGrid = () => {
-    // Generate a 5x5 grid around the selected tourist or center
     const center = selectedTourist ? [selectedTourist.lat, selectedTourist.lon] : [18.5204, 73.8567];
     const cells = [];
-    const step = 0.005; // ~500m
+    const step = 0.005; 
     for (let i = -2; i <= 2; i++) {
       for (let j = -2; j <= 2; j++) {
         const bounds = [
@@ -48,31 +47,30 @@ export default function RescueTools({ selectedTourist, trailHistory = [] }) {
   };
 
   return (
-    <div className="flex flex-col h-full gap-6">
-      <div className="flex justify-between items-center bg-white/5 p-4 rounded-3xl border border-white/10">
-        <div className="flex gap-2">
+    <div className="flex flex-col h-full gap-4 md:gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white/5 p-4 md:p-6 rounded-[2rem] md:rounded-3xl border border-white/10 gap-4">
+        <div className="flex flex-wrap gap-2">
           <ToolBtn active={activeTool === 'breadcrumb'} onClick={() => setActiveTool('breadcrumb')} icon={<MapPin size={14} />} label="Breadcrumbs" />
           <ToolBtn active={activeTool === 'grid'} onClick={() => setActiveTool('grid')} icon={<Grid size={14} />} label="Search Grid" />
-          <ToolBtn active={activeTool === 'trails'} onClick={() => setActiveTool('trails')} icon={<Info size={14} />} label="Trail Intelligence" />
+          <ToolBtn active={activeTool === 'trails'} onClick={() => setActiveTool('trails')} icon={<Info size={14} />} label="Trails" />
         </div>
         <button 
           onClick={exportSearchPlan}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all"
+          aria-label="Export Rescue Plan as PDF"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg"
         >
           <Download size={14} /> Export Plan
         </button>
       </div>
 
-      <div id="rescue-map-container" className="flex-1 bg-black rounded-[3rem] overflow-hidden border border-white/10 relative">
-        <MapContainer center={[18.5204, 73.8567]} zoom={13} className="w-full h-full grayscale invert opacity-80 contrast-[1.2]">
+      <div id="rescue-map-container" className="flex-1 min-h-[300px] bg-black rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 relative">
+        <MapContainer center={[18.5204, 73.8567]} zoom={13} className="w-full h-full grayscale invert opacity-80 contrast-[1.2]" zoomControl={false}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           
-          {/* Feature 4a: Breadcrumb Trail */}
           {activeTool === 'breadcrumb' && trailHistory.length > 0 && (
             <Polyline positions={trailHistory.map(p => [p.lat, p.lon])} color="#6366f1" weight={4} dashArray="10, 10" />
           )}
 
-          {/* Feature 4b: Grid Search Tool */}
           {activeTool === 'grid' && gridCells.map(cell => (
             <Rectangle 
               key={cell.id} 
@@ -88,7 +86,6 @@ export default function RescueTools({ selectedTourist, trailHistory = [] }) {
             />
           ))}
 
-          {/* Feature 4c: Trail Intelligence */}
           {showTrails && SAMPLE_TRAILS.map(trail => (
             <Polyline key={trail.id} positions={trail.points} color="#10b981" weight={6} opacity={0.5}>
               <Popup>{trail.name}</Popup>
@@ -97,9 +94,13 @@ export default function RescueTools({ selectedTourist, trailHistory = [] }) {
         </MapContainer>
 
         {activeTool === 'grid' && (
-          <div className="absolute top-6 right-6 z-[1000]">
-             <button onClick={generateGrid} className="px-6 py-3 bg-white text-black rounded-full font-black uppercase tracking-widest text-[10px] shadow-2xl">
-                Re-Generate Grid
+          <div className="absolute top-4 right-4 z-[1000]">
+             <button 
+              onClick={generateGrid} 
+              aria-label="Re-Generate Rescue Grid"
+              className="px-6 py-3 bg-white text-black rounded-full font-black uppercase tracking-widest text-[9px] shadow-2xl hover:bg-white/90 transition-all"
+             >
+                Regen Grid
              </button>
           </div>
         )}
@@ -112,7 +113,8 @@ function ToolBtn({ active, onClick, icon, label }) {
   return (
     <button 
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+      aria-pressed={active}
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-white/20 ${
         active ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white/5 text-white/40 hover:bg-white/10'
       }`}
     >
