@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeCanvas } from "qrcode.react";
 import { signProfile } from "../utils/cryptoId";
 import Spinner from "../components/Spinner";
+import { Zap } from "lucide-react";
 
 export default function DigitalID() {
   const [form, setForm] = useState({
