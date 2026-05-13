@@ -58,6 +58,24 @@ const FIRST_AID_DATA = [
 
 export default function WildernessAid() {
   const [selected, setSelected] = useState(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const playAudio = (item) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const text = `${item.title} instructions. ${item.steps.join(". ")}`;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const stopAudio = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-6 pb-20">
@@ -109,7 +127,10 @@ export default function WildernessAid() {
                     <h2 className="text-3xl font-black">{selected.title}</h2>
                   </div>
                   <button 
-                    onClick={() => setSelected(null)}
+                    onClick={() => {
+                      stopAudio();
+                      setSelected(null);
+                    }}
                     className="p-2 hover:bg-white/5 rounded-full text-white/40 hover:text-white"
                   >
                     Close
@@ -128,8 +149,15 @@ export default function WildernessAid() {
                 </div>
 
                 <div className="flex gap-4">
-                  <button className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all">
-                    <Play size={14} /> Play Audio Guide
+                  <button 
+                    onClick={() => isSpeaking ? stopAudio() : playAudio(selected)}
+                    className={`flex-1 py-4 ${isSpeaking ? 'bg-red-600 hover:bg-red-500' : 'bg-indigo-600 hover:bg-indigo-500'} rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all`}
+                  >
+                    {isSpeaking ? (
+                      <><Zap size={14} className="animate-pulse" /> Stop Audio</>
+                    ) : (
+                      <><Play size={14} /> Play AI Guide</>
+                    )}
                   </button>
                   <button className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all">
                     Request Help

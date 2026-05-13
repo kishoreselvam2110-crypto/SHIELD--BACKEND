@@ -51,8 +51,11 @@ export default function DigitalID() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[100px] -z-10"></div>
         
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">Decentralized Tourist ID</h2>
-          <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-widest mt-3">Secured via Ed25519 Cryptographic Signatures</p>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">Decentralized Tourist ID</h2>
+            <span className="px-2 py-1 bg-indigo-500 text-[8px] font-black rounded-md uppercase tracking-tighter">v2.0</span>
+          </div>
+          <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-widest mt-1">Secured via Ed25519 Cryptographic Signatures</p>
         </div>
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
