@@ -144,8 +144,8 @@ function Navbar() {
             <span className="text-2xl font-black tracking-tighter text-white group-hover:text-indigo-400 transition-colors">
               SHIELD<span className="text-indigo-500">AI</span>
             </span>
-            <span className="hidden sm:inline-block px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[8px] font-black uppercase text-indigo-400 tracking-widest animate-pulse">
-              Boosted by AI
+            <span className="hidden sm:inline-block px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[8px] font-black uppercase text-emerald-400 tracking-widest animate-pulse">
+              v2.0 Production Build
             </span>
           </Link>
           
