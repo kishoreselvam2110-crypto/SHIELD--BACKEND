@@ -159,7 +159,7 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
           />
         )}
 
-        {itinerary.map((day, dIdx) =>
+        {(itinerary || []).map((day, dIdx) =>
           (day.activities || []).map((act, aIdx) => {
             const customIcon = L.divIcon({
               className: 'custom-div-icon',
