@@ -563,9 +563,17 @@ io.on("connection", (socket) => {
 });
 
 // Serve Static Frontend Files
-const __dirname = path.resolve();
-const distPath = path.join(__dirname, "frontend", "dist");
-console.log("📂 Serving static files from:", distPath);
+const root = process.cwd();
+const distPath = path.join(root, "frontend", "dist");
+console.log("📂 PROD DEBUG: Root is", root);
+console.log("📂 PROD DEBUG: Serving static files from:", distPath);
+
+if (fs.existsSync(distPath)) {
+  console.log("✅ dist folder found!");
+} else {
+  console.error("❌ ERROR: dist folder NOT found at", distPath);
+}
+
 app.use(express.static(distPath));
 
 // Catch-all route to serve the Frontend's index.html (MUST BE LAST)
@@ -574,7 +582,7 @@ app.use((req, res) => {
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send(`Frontend build not found at ${indexPath}. Please ensure the build command ran successfully.`);
+    res.status(404).send(`<h3>404: SHIELD Build Not Found</h3><p>Server looking in: <code>${distPath}</code></p>`);
   }
 });
 
