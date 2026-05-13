@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Map, QrCode, Compass, Heart, ShieldCheck, Sun, Trees } from "lucide-react";
+import { Map, QrCode, Compass, Heart, ShieldCheck, Trees } from "lucide-react";
 import { useState, useEffect } from "react";
 import SafetyScore from "../components/SafetyScore";
 import SoftSafetyFeatures from "../components/SoftSafetyFeatures";

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trees, ShieldAlert, CheckCircle, Navigation, Radio, Users, Map as MapIcon, Zap } from "lucide-react";
+import { Trees, ShieldAlert, Navigation, Radio, Users, Zap } from "lucide-react";
 import { MapContainer, TileLayer, Circle, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -122,6 +122,7 @@ export default function WildernessSafety() {
           toast.success("Geofence Established! Your 1km Safe Zone is now active.");
         }
       } catch (err) {
+        console.error("Geofence start error:", err);
         toast.error("Connection failed.");
       }
     } else {
@@ -135,6 +136,7 @@ export default function WildernessSafety() {
         setStartPos(null);
         toast.success("Tracking Deactivated. Safe journey!");
       } catch (err) {
+        console.error("Geofence stop error:", err);
         toast.error("Deactivation failed.");
       }
     }

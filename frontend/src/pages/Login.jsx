@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Lock, User, ArrowRight, Smartphone, Eye, EyeOff, Mail } from "lucide-react";
+import { Shield, Lock, ArrowRight, Smartphone, Eye, EyeOff, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';

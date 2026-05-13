@@ -52,6 +52,7 @@ export default function AdminDashboard() {
       setSelectedFIR(firDetails);
       toast.success("E-FIR generated and filed with local authorities.", { icon: '📄' });
     } catch (err) {
+      console.error("E-FIR Error:", err);
       toast.error("Database connection failure. E-FIR logged to local cache.");
     } finally {
       setEfirLoading(null);

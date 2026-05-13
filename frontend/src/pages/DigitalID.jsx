@@ -33,7 +33,7 @@ export default function DigitalID() {
       const signedData = await signProfile(form);
       setResult(signedData);
     } catch (err) {
-      console.error(err);
+      console.error("ID Sign Error:", err);
       setError("Failed to sign ID. Storage access required.");
     } finally {
       setLoading(false);

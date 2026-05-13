@@ -70,10 +70,10 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
   }, []);
   
   // Extract itinerary points for centering
-  const itineraryMarkers = (itinerary || [])
+  const itineraryMarkers = useMemo(() => (itinerary || [])
     .flatMap((day) => day.activities || [])
     .filter(a => a.lat && a.lon)
-    .map((a) => [a.lat, a.lon]);
+    .map((a) => [a.lat, a.lon]), [itinerary]);
 
   // Track Live Location
   useEffect(() => {
@@ -104,15 +104,20 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [socket]);
 
-  const touristPoints = Object.values(tourists).map((t) => [t.lat, t.lon]);
+  const touristPoints = useMemo(() => Object.values(tourists).map((t) => [t.lat, t.lon]), [tourists]);
   
-  const sosAlerts = alerts.filter(a => a.type === 'SOS' && a.lat && a.lon);
-  const wildernessAlerts = alerts.filter(a => (a.type === 'WILDERNESS_BREACH' || a.type === 'WILDERNESS_EXPIRED') && a.lat && a.lon);
+  const sosAlerts = useMemo(() => alerts.filter(a => a.type === 'SOS' && a.lat && a.lon), [alerts]);
+  const wildernessAlerts = useMemo(() => alerts.filter(a => (a.type === 'WILDERNESS_BREACH' || a.type === 'WILDERNESS_EXPIRED') && a.lat && a.lon), [alerts]);
   
-  const sosPoints = sosAlerts.map(a => [a.lat, a.lon]);
-  const wildernessPoints = wildernessAlerts.map(a => [a.lat, a.lon]);
+  const sosPoints = useMemo(() => sosAlerts.map(a => [a.lat, a.lon]), [sosAlerts]);
+  const wildernessPoints = useMemo(() => wildernessAlerts.map(a => [a.lat, a.lon]), [wildernessAlerts]);
   
-  const allPoints = [...itineraryMarkers, ...touristPoints, ...sosPoints, ...wildernessPoints];
+  const allPoints = useMemo(() => [
+    ...itineraryMarkers, 
+    ...touristPoints, 
+    ...sosPoints, 
+    ...wildernessPoints
+  ], [itineraryMarkers, touristPoints, sosPoints, wildernessPoints]);
 
   // Identify Breached Zones
   const breachedZoneNames = alerts

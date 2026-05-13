@@ -99,6 +99,7 @@ function Navbar() {
         await axios.post(api("/api/sos"), payload);
         toast.success(isSimulated ? "Simulated Signal Transmitted!" : "SHIELD Signal Transmitted!", { icon: '🛡️' });
       } catch (e) {
+        console.error("SOS Transmission Error:", e);
         toast.error("Network Error: Signal blocked.");
       } finally {
         setSosLoading(false);
@@ -112,6 +113,7 @@ function Navbar() {
     navigator.geolocation.getCurrentPosition(
       (pos) => sendSos(pos.coords.latitude, pos.coords.longitude),
       (err) => {
+        console.error("SOS Geolocation Error:", err);
         if (window.confirm("GPS Blocked or Timeout. Would you like to transmit a simulated SHIELD Signal for demo purposes?")) {
           sendSos(18.5204, 73.8567, true);
         } else {
