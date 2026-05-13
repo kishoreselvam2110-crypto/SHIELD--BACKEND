@@ -1,3 +1,4 @@
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "../context/AppContext";
 import MapView from "../components/MapView";
@@ -5,6 +6,9 @@ import TacticalGlobe from "../components/TacticalGlobe";
 import { Shield, Users, Map as MapIcon, Bell, Activity, Zap, Radio, Search, Navigation, TrendingUp, Globe as GlobeIcon, Smartphone, LifeBuoy } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import RescueTools from "../components/RescueTools";
+import axios from "axios";
+import { api } from "../utils/api";
+import { toast } from "sonner";
 
 const chartData = [
   { time: '12:00', alerts: 2 }, { time: '13:00', alerts: 5 }, { time: '14:00', alerts: 3 },
@@ -12,16 +16,12 @@ const chartData = [
   { time: '18:00', alerts: 6 },
 ];
 
-import { useState } from "react";
-import axios from "axios";
-import { api } from "../utils/api";
-import { toast } from "sonner";
-
 export default function AdminDashboard() {
   const { alerts, tourists } = useApp();
   const [mapMode, setMapMode] = useState("tactical"); // "tactical", "hybrid", "colorful", "rescue"
   const [selectedTourist, setSelectedTourist] = useState(null);
   const [selectedFIR, setSelectedFIR] = useState(null);
+  const [efirLoading, setEfirLoading] = useState(null);
 
   const handleGenerateEFIR = async (alert) => {
     setEfirLoading(alert.time);

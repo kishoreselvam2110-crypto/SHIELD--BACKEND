@@ -141,6 +141,7 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
         preferCanvas={true}
         zoomControl={false}
       >
+        <FitBounds points={allPoints} />
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
