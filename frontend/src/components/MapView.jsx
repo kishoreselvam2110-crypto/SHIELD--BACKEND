@@ -6,6 +6,7 @@ import {
   Popup,
   Circle,
   useMap,
+  Polyline,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
