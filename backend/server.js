@@ -269,11 +269,25 @@ app.post("/api/smart-trip", async (req, res) => {
     let trip = await getTripPlan(destination, days, budget, language);
 
     if (!trip || !trip.itinerary || trip.itinerary.length < days) {
-      console.log("AI failed or key missing. Attempting OSM data fetch...");
+      const commonCities = {
+        'kolkata': { lat: 22.5726, lon: 88.3639 },
+        'paris': { lat: 48.8566, lon: 2.3522 },
+        'london': { lat: 51.5074, lon: -0.1278 },
+        'new york': { lat: 40.7128, lon: -74.0060 },
+        'delhi': { lat: 28.6139, lon: 77.2090 },
+        'tokyo': { lat: 35.6762, lon: 139.6503 }
+      };
+
+      let baseLat = 22.5726; // Default to Kolkata for demo
+      let baseLon = 88.3639;
       
+      const cityKey = destination.toLowerCase().split(',')[0].trim();
+      if (commonCities[cityKey]) {
+        baseLat = commonCities[cityKey].lat;
+        baseLon = commonCities[cityKey].lon;
+      }
+
       let generatedPlaces = [];
-      let baseLat = 0;
-      let baseLon = 0;
       let cityFound = false;
 
       try {

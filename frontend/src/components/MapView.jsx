@@ -145,9 +145,9 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
       >
         <FitBounds points={allPoints} />
         <TileLayer
-          attribution='&copy; Google Maps'
-          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-          maxZoom={20}
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          updateWhenIdle={true}
         />
 
         {itinerary.map((day, dIdx) =>
