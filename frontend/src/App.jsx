@@ -167,10 +167,10 @@ function Navbar() {
               onClick={triggerSOS}
               disabled={sosLoading}
               aria-label="Trigger Emergency SOS"
-              className="px-6 py-2 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black"
+              className={`sos-glow px-6 py-2 ${sosLoading ? 'bg-red-800' : 'bg-red-600'} rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black`}
             >
               {sosLoading ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <div className="w-2 h-2 bg-white rounded-full animate-ping" />}
-              Emergency SOS
+              {sosLoading ? "SENDING..." : "EMERGENCY SOS"}
             </motion.button>
           </div>
 

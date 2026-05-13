@@ -151,12 +151,12 @@ export default function WildernessAid() {
                 <div className="flex gap-4">
                   <button 
                     onClick={() => isSpeaking ? stopAudio() : playAudio(selected)}
-                    className={`flex-1 py-4 ${isSpeaking ? 'bg-red-600 hover:bg-red-500' : 'bg-indigo-600 hover:bg-indigo-500'} rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all`}
+                    className={`flex-1 py-4 ${isSpeaking ? 'bg-red-600 hover:bg-red-500 shadow-[0_0_30px_rgba(220,38,38,0.3)]' : 'bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_30px_rgba(79,70,229,0.3)]'} rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all`}
                   >
                     {isSpeaking ? (
-                      <><Zap size={14} className="animate-pulse" /> Stop Audio</>
+                      <><Zap size={14} className="animate-pulse text-red-200" /> Stop Audio</>
                     ) : (
-                      <><Play size={14} /> Play AI Guide</>
+                      <><Play size={14} className="text-indigo-200" /> Play AI Guide</>
                     )}
                   </button>
                   <button className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all">

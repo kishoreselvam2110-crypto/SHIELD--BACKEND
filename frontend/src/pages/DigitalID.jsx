@@ -159,8 +159,9 @@ export default function DigitalID() {
           <button
             onClick={() => window.print()}
             aria-label="Download or Print Secure ID"
-            className="px-12 py-4 bg-white/10 hover:bg-white/20 rounded-2xl font-black transition-all border border-white/10 text-sm uppercase tracking-widest text-white shadow-xl focus:outline-none focus:ring-4 focus:ring-white/10"
+            className="group px-12 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-black transition-all border border-emerald-400/20 text-sm uppercase tracking-widest text-white shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] focus:outline-none focus:ring-4 focus:ring-emerald-500/20 flex items-center gap-3"
           >
+            <Zap className="w-4 h-4 text-emerald-300" />
             Download Secure ID
           </button>
         </motion.div>
