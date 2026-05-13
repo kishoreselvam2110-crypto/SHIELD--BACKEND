@@ -562,9 +562,13 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Socket Disconnected:", socket.id));
 });
 
+// Serve Static Frontend Files
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "frontend/dist")));
+
 // Catch-all route to serve the Frontend's index.html (MUST BE LAST)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(path.join(__dirname, "frontend/dist/index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
