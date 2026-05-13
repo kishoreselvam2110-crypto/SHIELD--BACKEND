@@ -32,6 +32,7 @@ function AnimatedRoutes() {
         <Route path="/home" element={<PageWrapper><Landing /></PageWrapper>} />
         <Route path="/planner" element={<PageWrapper><Planner /></PageWrapper>} />
         <Route path="/digital-id" element={<PageWrapper><DigitalID /></PageWrapper>} />
+        <Route path="/verify" element={<PageWrapper><VerifyID /></PageWrapper>} />
         <Route path="/verify/:id" element={<PageWrapper><VerifyID /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
         <Route path="/wilderness" element={<PageWrapper><WildernessSafety /></PageWrapper>} />

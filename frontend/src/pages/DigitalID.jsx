@@ -105,10 +105,10 @@ export default function DigitalID() {
                   >
                     <div className="p-4 md:p-6 bg-white rounded-[2rem] shadow-[0_0_50px_rgba(255,255,255,0.2)] max-w-full">
                       <QRCodeCanvas 
-                        value={JSON.stringify(result)} 
+                        value={`${window.location.origin}/verify?data=${encodeURIComponent(JSON.stringify(result))}`} 
                         size={220}
                         style={{ width: '100%', height: 'auto', maxWidth: '220px' }}
-                        level="L"
+                        level="M"
                         includeMargin={false}
                       />
                     </div>
