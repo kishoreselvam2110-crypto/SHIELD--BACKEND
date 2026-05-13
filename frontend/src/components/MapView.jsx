@@ -150,33 +150,69 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
           updateWhenIdle={true}
         />
 
+        {/* Strategic Vector (Path) */}
+        {itineraryMarkers.length > 1 && (
+          <Polyline 
+            positions={itineraryMarkers} 
+            pathOptions={{ color: '#6366f1', weight: 3, dashArray: '10, 10', opacity: 0.6 }} 
+          />
+        )}
+
         {itinerary.map((day, dIdx) =>
-          (day.activities || []).map((act, aIdx) => (
-            <Marker key={`act-${dIdx}-${aIdx}`} position={[act.lat, act.lon]}>
+          (day.activities || []).map((act, aIdx) => {
+            const customIcon = L.divIcon({
+              className: 'custom-div-icon',
+              html: `<div class="relative"><div class="neon-pulse"></div><div class="neon-pin"></div></div>`,
+              iconSize: [30, 30],
+              iconAnchor: [15, 30]
+            });
+
+            return (
+              <Marker 
+                key={`act-${dIdx}-${aIdx}`} 
+                position={[act.lat, act.lon]}
+                icon={customIcon}
+              >
+                <Popup minWidth={250}>
+                  <div className="p-2 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Day {day.day} • {act.time}</span>
+                    </div>
+                    <h3 className="text-lg font-black tracking-tighter uppercase leading-none">{act.name}</h3>
+                    <p className="text-xs text-white/60 leading-relaxed">{act.description}</p>
+                    <div className="pt-3 border-t border-white/10 flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                      <span className="text-[9px] font-black uppercase tracking-tighter text-emerald-400">Secure Destination Verified</span>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })
+        )}
+
+        {Object.entries(tourists).map(([id, loc]) => {
+          const touristIcon = L.divIcon({
+            className: 'tourist-beacon',
+            html: `<div class="relative"><div class="w-3 h-3 bg-indigo-500 rounded-full border-2 border-white shadow-[0_0_10px_rgba(99,102,241,1)]"></div><div class="absolute inset-0 bg-indigo-400 rounded-full animate-ping opacity-50"></div></div>`,
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
+          });
+          return (
+            <Marker
+              key={id}
+              position={[loc.lat, loc.lon]}
+              icon={touristIcon}
+            >
               <Popup>
-                <div className="text-black text-sm">
-                  <strong className="block mb-1">{act.name}</strong>
-                  <p className="opacity-70 leading-tight">{act.description}</p>
-                  <div className="mt-2 text-indigo-600 font-bold">{act.time}</div>
+                <div className="p-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Live Asset Signal</p>
+                  <p className="text-sm font-black tracking-tighter uppercase">Tourist ID: {id.slice(0, 8)}</p>
                 </div>
               </Popup>
             </Marker>
-          ))
-        )}
-
-        {Object.entries(tourists).map(([id, loc]) => (
-          <Marker
-            key={id}
-            position={[loc.lat, loc.lon]}
-            icon={new L.Icon({
-              iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-            })}
-          >
-            <Popup><div className="text-black font-bold uppercase tracking-widest text-[10px]">Tourist: {id}</div></Popup>
-          </Marker>
-        ))}
+          );
+        })}
 
         {globalZones.map((z, i) => {
           const isBreached = breachedZoneNames.includes(z.name);
