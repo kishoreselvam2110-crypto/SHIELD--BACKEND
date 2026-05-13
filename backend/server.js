@@ -274,12 +274,25 @@ app.post("/api/smart-trip", async (req, res) => {
       let generatedPlaces = [];
       let baseLat = 20.5937;
       let baseLon = 78.9629;
+      let cityFound = false;
 
       try {
-        const destCoords = await getPlaces(destination);
+        console.log(`🔍 SHIELD Geo-Vectoring: Resolving ${destination}...`);
+        let destCoords = await getPlaces(destination);
+        
+        // Fallback: If "Paris, france" fails, try just "Paris"
+        if (destCoords.length === 0 && destination.includes(',')) {
+          console.log(`⚠️ Full query failed. Trying sub-vector: ${destination.split(',')[0]}`);
+          destCoords = await getPlaces(destination.split(',')[0]);
+        }
+
         if (destCoords.length > 0) {
           baseLat = parseFloat(destCoords[0].lat);
           baseLon = parseFloat(destCoords[0].lon);
+          cityFound = true;
+          console.log(`✅ Destination Resolved: [${baseLat}, ${baseLon}]`);
+        } else {
+          console.warn(`❌ Could not resolve coordinates for ${destination}. Falling back to default sector.`);
         }
         
         const realPlaces = await getPlaces(`tourism in ${destination}`);

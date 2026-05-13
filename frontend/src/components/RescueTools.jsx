@@ -64,8 +64,17 @@ export default function RescueTools({ selectedTourist, trailHistory = [] }) {
       </div>
 
       <div id="rescue-map-container" className="flex-1 min-h-[300px] bg-black rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 relative">
-        <MapContainer center={[18.5204, 73.8567]} zoom={13} className="w-full h-full grayscale invert opacity-80 contrast-[1.2]" zoomControl={false}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapContainer 
+          center={[18.5204, 73.8567]} 
+          zoom={13} 
+          className="w-full h-full opacity-90" 
+          zoomControl={false}
+          preferCanvas={true}
+        >
+          <TileLayer 
+            attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          />
           
           {activeTool === 'breadcrumb' && trailHistory.length > 0 && (
             <Polyline positions={trailHistory.map(p => [p.lat, p.lon])} color="#6366f1" weight={4} dashArray="10, 10" />

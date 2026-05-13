@@ -112,12 +112,14 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
   const sosPoints = useMemo(() => sosAlerts.map(a => [a.lat, a.lon]), [sosAlerts]);
   const wildernessPoints = useMemo(() => wildernessAlerts.map(a => [a.lat, a.lon]), [wildernessAlerts]);
   
-  const allPoints = useMemo(() => [
-    ...itineraryMarkers, 
-    ...touristPoints, 
-    ...sosPoints, 
-    ...wildernessPoints
-  ], [itineraryMarkers, touristPoints, sosPoints, wildernessPoints]);
+  const allPoints = useMemo(() => {
+    // Priority 1: If there's an itinerary, focus ONLY on the trip destination
+    if (itineraryMarkers.length > 0) return itineraryMarkers;
+    
+    // Priority 2: Fallback to all other points (tourists, SOS, etc)
+    const points = [...touristPoints, ...sosPoints, ...wildernessPoints];
+    return points;
+  }, [itineraryMarkers, touristPoints, sosPoints, wildernessPoints]);
 
   // Identify Breached Zones
   const breachedZoneNames = alerts
