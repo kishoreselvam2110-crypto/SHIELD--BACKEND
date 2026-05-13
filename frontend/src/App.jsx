@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { api } from "./utils/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { AppProvider, useApp } from "./context/AppContext";
 import { Toaster, toast } from "sonner";
+import { Menu, X, Shield, Map as MapIcon, Calendar, User, ShieldAlert, AlertTriangle } from "lucide-react";
 
 import Landing from "./pages/Landing";
 import Planner from "./pages/Planner";
@@ -43,10 +44,10 @@ function AnimatedRoutes() {
 function PageWrapper({ children }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
     >
       {children}
     </motion.div>
@@ -56,19 +57,22 @@ function PageWrapper({ children }) {
 function Navbar() {
   const { socket } = useApp();
   const [sosLoading, setSosLoading] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
 
   const triggerSOS = async () => {
-    // 1. Immediate Sensory Feedback (Haptics & Voice)
     if ('vibrate' in navigator) {
       navigator.vibrate([500, 200, 500, 200, 500]);
     }
     if ('speechSynthesis' in window) {
       const msg = new SpeechSynthesisUtterance("National Security Protocol Initiated. Transmitting SOS signal.");
-      msg.rate = 1;
       window.speechSynthesis.speak(msg);
     }
 
-    // Visual Flash for iOS fallback
     document.body.style.backgroundColor = "red";
     setTimeout(() => document.body.style.backgroundColor = "", 100);
     setTimeout(() => document.body.style.backgroundColor = "red", 200);
@@ -102,7 +106,6 @@ function Navbar() {
     };
 
     if (useSimulated) {
-      // Fallback for non-HTTPS IP access: Use a random point in a known Indian tourist spot (e.g., Pune)
       return sendSos(18.5204, 73.8567, true);
     }
 
@@ -120,31 +123,100 @@ function Navbar() {
     );
   };
 
+  const navLinks = [
+    { to: "/home", label: "Tourist Portal", icon: <MapIcon size={18} /> },
+    { to: "/planner", label: "Planner", icon: <Calendar size={18} /> },
+    { to: "/digital-id", label: "Digital ID", icon: <User size={18} /> },
+    { to: "/wilderness", label: "Wilderness Mode", icon: <ShieldAlert size={18} />, color: "text-emerald-400" },
+    { to: "/admin", label: "Control Center", icon: <AlertTriangle size={18} />, color: "text-indigo-400" },
+  ];
+
   return (
-    <nav className="flex justify-between items-center px-10 py-6 sticky top-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/5">
-      <Link to="/home" className="flex items-center gap-3">
-        <span className="text-2xl font-black tracking-tighter text-white hover:text-indigo-400 transition-colors">SHIELD<span className="text-indigo-500">AI</span></span>
-        <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[8px] font-black uppercase text-indigo-400 tracking-widest animate-pulse">Boosted by AI</span>
-      </Link>
-      
-      <div className="flex gap-8 items-center">
-        <Link to="/home" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Tourist Portal</Link>
-        <Link to="/planner" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Planner</Link>
-        <Link to="/digital-id" className="text-sm font-bold text-white/60 hover:text-white transition-colors">Digital ID</Link>
-        <Link to="/wilderness" className="text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors">Wilderness Mode</Link>
-        <Link to="/admin" className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">Control Center</Link>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={triggerSOS}
-          disabled={sosLoading}
-          className="px-6 py-2 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2"
-        >
-          {sosLoading ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <div className="w-2 h-2 bg-white rounded-full animate-ping" />}
-          Emergency SOS
-        </motion.button>
+    <nav className="sticky top-0 z-[60] bg-black/40 backdrop-blur-2xl border-b border-white/5" role="navigation" aria-label="Main Navigation">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          <Link to="/home" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg p-1" aria-label="SHIELD AI Home">
+            <span className="text-2xl font-black tracking-tighter text-white group-hover:text-indigo-400 transition-colors">
+              SHIELD<span className="text-indigo-500">AI</span>
+            </span>
+            <span className="hidden sm:inline-block px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[8px] font-black uppercase text-indigo-400 tracking-widest animate-pulse">
+              Boosted by AI
+            </span>
+          </Link>
+          
+          {/* Desktop Links */}
+          <div className="hidden lg:flex gap-6 items-center">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.to}
+                to={link.to} 
+                className={`text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-white/20 rounded-md px-2 py-1 ${link.color || "text-white/60 hover:text-white"}`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={triggerSOS}
+              disabled={sosLoading}
+              aria-label="Trigger Emergency SOS"
+              className="px-6 py-2 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black"
+            >
+              {sosLoading ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <div className="w-2 h-2 bg-white rounded-full animate-ping" />}
+              Emergency SOS
+            </motion.button>
+          </div>
+
+          {/* Mobile SOS & Menu Toggle */}
+          <div className="flex items-center gap-4 lg:hidden">
+             <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={triggerSOS}
+              disabled={sosLoading}
+              aria-label="Trigger Emergency SOS"
+              className="p-3 bg-red-600 rounded-full text-white shadow-[0_0_15px_rgba(220,38,38,0.4)] focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <Shield size={20} className={sosLoading ? "animate-spin" : "animate-pulse"} />
+            </motion.button>
+
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 text-white/80 hover:text-white focus:outline-none"
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-black/95 backdrop-blur-3xl border-b border-white/10 overflow-hidden"
+          >
+            <div className="px-4 pt-2 pb-6 space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`flex items-center gap-4 px-4 py-4 rounded-2xl text-lg font-bold ${link.color || "text-white/80 hover:bg-white/5 hover:text-white"}`}
+                >
+                  {link.icon}
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
@@ -157,7 +229,7 @@ function App() {
       <Toaster position="top-right" theme="dark" toastOptions={{ style: { background: '#050505', color: '#fff', border: '1px solid #333' } }} />
       <Router>
         <GsapGlitchWrapper containerRef={containerRef}>
-          <div ref={containerRef} className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30 selection:text-indigo-200">
+          <div ref={containerRef} className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30 selection:text-indigo-200 flex flex-col">
           {/* Animated Background Gradients */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse"></div>
@@ -167,14 +239,13 @@ function App() {
           <Navbar />
           <SafetyAlert />
           
-          <main className="relative pt-10 pb-20">
+          <main className="relative flex-grow" role="main">
             <AnimatedRoutes />
           </main>
 
-          
           <VoiceAssistant />
           
-          <footer className="text-center py-10 text-white/20 text-[10px] uppercase tracking-[0.2em] font-bold">
+          <footer className="text-center py-10 text-white/20 text-[10px] uppercase tracking-[0.2em] font-bold border-t border-white/5" role="contentinfo">
             &copy; 2026 SHIELD AI • National Tourist Safety Protocol
           </footer>
         </div>
@@ -184,7 +255,6 @@ function App() {
   );
 }
 
-// Separate component to safely use AppContext for alerts
 function GsapGlitchWrapper({ children, containerRef }) {
   const { alerts } = useApp();
   const glitching = useRef(false);
@@ -192,7 +262,6 @@ function GsapGlitchWrapper({ children, containerRef }) {
   useGSAP(() => {
     if (glitching.current) return;
     
-    // Trigger on SOS or critical wilderness alerts
     if (alerts.length > 0 && (alerts[0].type === 'SOS' || alerts[0].priority === 'CRITICAL')) {
       glitching.current = true;
       gsap.to(containerRef.current, {
@@ -215,3 +284,4 @@ function GsapGlitchWrapper({ children, containerRef }) {
 }
 
 export default App;
+

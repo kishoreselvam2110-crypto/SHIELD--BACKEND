@@ -45,7 +45,6 @@ export default function Login() {
     let mounted = true;
 
     if (step === 2) {
-      // Generate a random 4-digit verification code
       const demoCode = Math.floor(1000 + Math.random() * 9000).toString().split("");
       
       const fillDigit = (index) => {
@@ -60,9 +59,8 @@ export default function Login() {
               return newOtp;
             });
             fillDigit(index + 1);
-          }, 800); // 800ms per digit
+          }, 800);
         } else {
-          // Wait 1.5 seconds for the jury to see the code, then auto-login
           setTimeout(() => {
             if (!mounted) return;
             toast.success("SHIELD Access Granted!");
@@ -92,7 +90,6 @@ export default function Login() {
       toast.loading("Initializing Biometric Scan...");
       const { data: options } = await axios.get(api("/api/auth/login-options"));
       const authResponse = await startAuthentication(options);
-      // In production, verify authResponse on backend here
       toast.dismiss();
       toast.success("Biometric Match! Access Granted.");
       navigate("/home");
@@ -111,7 +108,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-6">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 md:p-6 overflow-hidden">
       <AnimatePresence mode="wait">
         {step === 1 ? (
           <motion.div
@@ -120,53 +117,61 @@ export default function Login() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[3rem] shadow-[0_0_50px_rgba(79,70,229,0.1)] relative overflow-hidden animate-float"
+            className="w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_50px_rgba(79,70,229,0.1)] relative overflow-hidden"
           >
             {/* Sci-Fi Scanning Line */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-indigo-500/50 shadow-[0_0_20px_#6366f1] animate-scanline z-50 pointer-events-none" />
 
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[60px] -z-10" />
             
-            <div className="flex flex-col items-center mb-10">
-              <div className="p-4 bg-indigo-600 rounded-3xl mb-4 shadow-[0_0_30px_rgba(79,70,229,0.5)]">
+            <div className="flex flex-col items-center mb-8 md:mb-12">
+              <motion.div 
+                whileHover={{ rotate: 10, scale: 1.1 }}
+                className="p-4 bg-indigo-600 rounded-[1.5rem] md:rounded-3xl mb-4 md:mb-6 shadow-[0_0_30px_rgba(79,70,229,0.5)]"
+              >
                 <Shield className="text-white" size={32} />
-              </div>
-              <h2 className="text-3xl font-black tracking-tighter text-white">SHIELD <span className="text-indigo-500">AUTH</span></h2>
-              <p ref={textRef} className="text-[10px] uppercase tracking-[0.3em] text-indigo-300 mt-2 font-bold min-h-[15px]">National Security Gateway</p>
+              </motion.div>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white">SHIELD <span className="text-indigo-500">AUTH</span></h2>
+              <p ref={textRef} className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-indigo-300 mt-2 font-black min-h-[15px]">National Security Gateway</p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
               <div className="space-y-2">
-                <label className="text-[9px] uppercase font-black text-indigo-400 tracking-widest ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                <label htmlFor="email" className="text-[9px] uppercase font-black text-indigo-400 tracking-widest ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-indigo-400 transition-colors" size={18} />
                   <input
+                    id="email"
                     type="email"
                     required
+                    aria-required="true"
                     value={form.id}
                     onChange={(e) => setForm({...form, id: e.target.value})}
                     placeholder="Enter your email ID"
-                    className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 text-white"
+                    className="w-full pl-12 pr-4 py-4 md:py-5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 text-white text-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] uppercase font-black text-indigo-400 tracking-widest ml-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                <label htmlFor="password" className="text-[9px] uppercase font-black text-indigo-400 tracking-widest ml-1">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-indigo-400 transition-colors" size={18} />
                   <input
+                    id="password"
                     type={showPassword ? "text" : "password"}
                     required
+                    aria-required="true"
                     value={form.password}
                     onChange={(e) => setForm({...form, password: e.target.value})}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 text-white"
+                    className="w-full pl-12 pr-12 py-4 md:py-5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 text-white text-sm"
                   />
                   <button 
                     type="button" 
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -175,7 +180,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl flex items-center justify-center gap-3"
+                className="w-full py-4 md:py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
               >
                 Authenticate
                 <ArrowRight size={20} />
@@ -190,7 +195,8 @@ export default function Login() {
               <button
                 type="button"
                 onClick={handleBiometric}
-                className="w-full py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl font-black text-lg transition-all shadow-xl flex items-center justify-center gap-3"
+                aria-label="Authenticate with Biometrics"
+                className="w-full py-4 md:py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl font-black text-lg transition-all shadow-xl flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-white/10"
               >
                 <Smartphone size={20} className="text-indigo-400" />
                 Use Biometrics
@@ -204,28 +210,29 @@ export default function Login() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[3rem] shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden animate-float"
+            className="w-full max-w-md bg-white/5 backdrop-blur-3xl border border-white/10 p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden"
           >
             {/* Sci-Fi Scanning Line (Emerald) */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-emerald-500/50 shadow-[0_0_20px_#10b981] animate-scanline z-50 pointer-events-none" />
 
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 blur-[60px] -z-10" />
             
-            <div className="flex flex-col items-center mb-10">
-              <div className="p-4 bg-emerald-600 rounded-3xl mb-4 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+            <div className="flex flex-col items-center mb-8 md:mb-12">
+              <div className="p-4 bg-emerald-600 rounded-[1.5rem] md:rounded-3xl mb-4 md:mb-6 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
                 <Smartphone className="text-white animate-pulse" size={32} />
               </div>
-              <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">Two-Step <span className="text-emerald-500">Auth</span></h2>
-              <p ref={textRef} className="text-[10px] uppercase tracking-[0.3em] text-emerald-300 mt-2 font-bold min-h-[15px]">Enter Verification Code</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white uppercase italic leading-tight">Two-Step <span className="text-emerald-500">Auth</span></h2>
+              <p ref={textRef} className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-emerald-300 mt-2 font-black min-h-[15px]">Enter Verification Code</p>
             </div>
 
-            <form onSubmit={handleOtp} className="space-y-8">
-              <div className="flex justify-between gap-4">
+            <form onSubmit={handleOtp} className="space-y-8 md:space-y-10">
+              <div className="flex justify-between gap-3 md:gap-4">
                 {otp.map((digit, i) => (
                   <input
                     key={i}
                     type="text"
                     maxLength="1"
+                    aria-label={`OTP Digit ${i + 1}`}
                     value={digit}
                     onChange={(e) => {
                       const newOtp = [...otp];
@@ -233,21 +240,25 @@ export default function Login() {
                       setOtp(newOtp);
                       if (e.target.value && e.target.nextSibling) e.target.nextSibling.focus();
                     }}
-                    className="w-16 h-20 text-center text-3xl font-black bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500 outline-none text-emerald-400"
+                    className="w-full h-16 md:h-20 text-center text-3xl font-black bg-white/5 border border-white/10 rounded-2xl focus:border-emerald-500 outline-none text-emerald-400 focus:ring-4 focus:ring-emerald-500/20 transition-all"
                   />
                 ))}
               </div>
 
               <button
                 type="submit"
-                className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl"
+                className="w-full py-4 md:py-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
               >
                 Verify & Enter
               </button>
               
-              <p className="text-center text-[10px] text-white/20 uppercase tracking-widest cursor-pointer hover:text-white transition-colors" onClick={() => setStep(1)}>
+              <button 
+                type="button"
+                className="w-full text-center text-[10px] text-white/20 uppercase tracking-widest cursor-pointer hover:text-white transition-colors focus:outline-none" 
+                onClick={() => setStep(1)}
+              >
                 Back to credentials
-              </p>
+              </button>
             </form>
           </motion.div>
         )}
@@ -255,3 +266,4 @@ export default function Login() {
     </div>
   );
 }
+

@@ -26,8 +26,20 @@ L.Icon.Default.mergeOptions({
 function FitBounds({ points }) {
   const map = useMap();
   const lastPoints = useRef("");
+  const [autoFollow, setAutoFollow] = useState(true);
 
   useEffect(() => {
+    const stopFollow = () => setAutoFollow(false);
+    map.on("dragstart", stopFollow);
+    map.on("zoomstart", stopFollow);
+    return () => {
+      map.off("dragstart", stopFollow);
+      map.off("zoomstart", stopFollow);
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (!autoFollow) return;
     if (points && points.length > 0) {
       const currentPointsStr = JSON.stringify(points);
       if (currentPointsStr === lastPoints.current) return;
@@ -42,7 +54,7 @@ function FitBounds({ points }) {
         console.warn("FitBounds failed:", e);
       }
     }
-  }, [map, points]);
+  }, [map, points, autoFollow]);
   return null;
 }
 

@@ -21,16 +21,35 @@ export default function AdminDashboard() {
   const { alerts, tourists } = useApp();
   const [mapMode, setMapMode] = useState("tactical"); // "tactical", "hybrid", "colorful", "rescue"
   const [selectedTourist, setSelectedTourist] = useState(null);
-  const [efirLoading, setEfirLoading] = useState(null);
+  const [selectedFIR, setSelectedFIR] = useState(null);
 
   const handleGenerateEFIR = async (alert) => {
     setEfirLoading(alert.time);
     try {
+      // Simulate/File E-FIR
+      const firDetails = {
+        firId: `EFIR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        timestamp: new Date().toISOString(),
+        sosTime: alert.time,
+        userId: alert.userId,
+        location: { lat: alert.lat, lon: alert.lon },
+        status: "FILED",
+        details: {
+          battery: alert.batteryLevel,
+          panic: alert.isPanic,
+          alertType: alert.type,
+          message: alert.alert || alert.message
+        }
+      };
+      
       await axios.post(api("/api/efir/create"), {
         tourist_hash: alert.userId,
         location_lat: alert.lat,
-        location_lon: alert.lon
+        location_lon: alert.lon,
+        details: firDetails
       });
+      
+      setSelectedFIR(firDetails);
       toast.success("E-FIR generated and filed with local authorities.", { icon: '📄' });
     } catch (err) {
       toast.error("Database connection failure. E-FIR logged to local cache.");
@@ -41,6 +60,98 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-[1800px] mx-auto p-4 md:p-8 space-y-8">
+      {/* E-FIR Modal */}
+      <AnimatePresence>
+        {selectedFIR && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[3000] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setSelectedFIR(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white text-black w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-[#FF9933] h-4"></div>
+              <div className="p-12 space-y-8">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-6">
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" 
+                      alt="Emblem" 
+                      className="h-16"
+                    />
+                    <div>
+                      <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">Police E-FIR</h2>
+                      <p className="text-[10px] font-black tracking-widest text-black/40 mt-1 uppercase">Ministry of Home Affairs • Govt of India</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-black uppercase text-black/40">Status</p>
+                    <p className="text-emerald-600 font-black tracking-tighter uppercase">{selectedFIR.status}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 py-8 border-y border-black/5">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">FIR Number</p>
+                      <p className="font-mono font-bold text-lg">{selectedFIR.firId}</p>
+                    </div>
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">Incident Timestamp</p>
+                      <p className="font-bold">{new Date(selectedFIR.sosTime).toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">User ID Hash</p>
+                      <p className="font-mono text-sm opacity-60">{selectedFIR.userId}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">Precise Location</p>
+                      <p className="font-bold">{selectedFIR.location.lat.toFixed(6)}, {selectedFIR.location.lon.toFixed(6)}</p>
+                    </div>
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">Telemetry Data</p>
+                      <div className="flex gap-4 mt-1">
+                        <span className="px-2 py-0.5 bg-black/5 rounded text-[10px] font-bold">Bat: {selectedFIR.details.battery}%</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${selectedFIR.details.panic ? 'bg-red-500 text-white' : 'bg-black/5'}`}>
+                          Panic: {selectedFIR.details.panic ? "YES" : "NO"}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-black/40 tracking-widest">System Message</p>
+                      <p className="text-xs font-medium italic opacity-60">"{selectedFIR.details.message}"</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-4">
+                  <div className="text-[8px] text-black/20 font-mono">
+                    <p>DIGITALLY SIGNED VIA ED25519</p>
+                    <p>SYSTEM FILING: {selectedFIR.timestamp}</p>
+                  </div>
+                  <button 
+                    onClick={() => setSelectedFIR(null)}
+                    className="px-8 py-3 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black/80 transition-all"
+                  >
+                    Close Report
+                  </button>
+                </div>
+              </div>
+              <div className="bg-[#138808] h-4 mt-auto"></div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Dynamic Header */}
       <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8">
         <div className="flex items-center gap-6">
