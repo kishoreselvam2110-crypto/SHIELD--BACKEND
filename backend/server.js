@@ -272,8 +272,8 @@ app.post("/api/smart-trip", async (req, res) => {
       console.log("AI failed or key missing. Attempting OSM data fetch...");
       
       let generatedPlaces = [];
-      let baseLat = 20.5937;
-      let baseLon = 78.9629;
+      let baseLat = 0;
+      let baseLon = 0;
       let cityFound = false;
 
       try {

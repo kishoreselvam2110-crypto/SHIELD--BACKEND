@@ -126,14 +126,14 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
     .filter((a) => a.type === "GEOFENCE")
     .map((a) => a.zoneName);
 
-  const defaultCenter = itineraryMarkers.length > 0 ? itineraryMarkers[0] : [20.5937, 78.9629];
-  const defaultZoom = itineraryMarkers.length > 0 ? 12 : 5;
+  const defaultCenter = itineraryMarkers.length > 0 ? itineraryMarkers[0] : [0, 0];
+  const defaultZoom = itineraryMarkers.length > 0 ? 12 : 2;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="h-[550px] w-full rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 z-0"
+      className="h-[550px] w-full rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 z-0 bg-[#050505]"
     >
       <MapContainer
         center={defaultCenter}
@@ -145,11 +145,9 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
       >
         <FitBounds points={allPoints} />
         <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          updateWhenIdle={true}
-          updateWhenZooming={false}
-          keepBuffer={2}
+          attribution='&copy; Google Maps'
+          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          maxZoom={20}
         />
 
         {itinerary.map((day, dIdx) =>

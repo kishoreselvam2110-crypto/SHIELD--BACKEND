@@ -249,15 +249,15 @@ export default function WildernessSafety() {
               </div>
             ) : (
               <MapContainer 
-                center={[location.lat, location.lon]} 
-                zoom={15} 
-                className="w-full h-full rounded-[2rem] md:rounded-[3rem] opacity-90"
+                center={location ? [location.lat, location.lon] : [0, 0]} 
+                zoom={location ? 15 : 2} 
+                className="w-full h-full rounded-[2rem] md:rounded-[3rem]"
                 zoomControl={false}
                 preferCanvas={true}
               >
                 <TileLayer 
-                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                  url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+                  attribution='&copy; Google Maps'
                 />
                 <MapRecenter center={[location.lat, location.lon]} />
                 
