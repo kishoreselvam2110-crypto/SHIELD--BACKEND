@@ -251,10 +251,14 @@ export default function WildernessSafety() {
               <MapContainer 
                 center={[location.lat, location.lon]} 
                 zoom={15} 
-                className="w-full h-full rounded-[2rem] md:rounded-[3rem] grayscale invert contrast-[1.2] brightness-50 opacity-80"
+                className="w-full h-full rounded-[2rem] md:rounded-[3rem] opacity-90"
                 zoomControl={false}
+                preferCanvas={true}
               >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <TileLayer 
+                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                />
                 <MapRecenter center={[location.lat, location.lon]} />
                 
                 <Marker position={[location.lat, location.lon]} />

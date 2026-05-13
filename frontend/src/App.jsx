@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
@@ -9,16 +10,16 @@ import { AppProvider, useApp } from "./context/AppContext";
 import { Toaster, toast } from "sonner";
 import { Menu, X, Shield, Map as MapIcon, Calendar, User, ShieldAlert, AlertTriangle } from "lucide-react";
 
-import Landing from "./pages/Landing";
-import Planner from "./pages/Planner";
-import DigitalID from "./pages/DigitalID";
-import VerifyID from "./pages/VerifyID";
-import AdminDashboard from "./pages/AdminDashboard";
-import Login from "./pages/Login";
-import VoiceAssistant from "./components/VoiceAssistant";
-import SafetyAlert from "./components/SafetyAlert";
-import WildernessSafety from "./pages/WildernessSafety";
-import WildernessAid from "./pages/WildernessAid";
+const Landing = lazy(() => import("./pages/Landing"));
+const Planner = lazy(() => import("./pages/Planner"));
+const DigitalID = lazy(() => import("./pages/DigitalID"));
+const VerifyID = lazy(() => import("./pages/VerifyID"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Login = lazy(() => import("./pages/Login"));
+const VoiceAssistant = lazy(() => import("./components/VoiceAssistant"));
+const SafetyAlert = lazy(() => import("./components/SafetyAlert"));
+const WildernessSafety = lazy(() => import("./pages/WildernessSafety"));
+const WildernessAid = lazy(() => import("./pages/WildernessAid"));
 
 import "./App.css";
 
@@ -27,17 +28,19 @@ function AnimatedRoutes() {
   
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><Login /></PageWrapper>} />
-        <Route path="/home" element={<PageWrapper><Landing /></PageWrapper>} />
-        <Route path="/planner" element={<PageWrapper><Planner /></PageWrapper>} />
-        <Route path="/digital-id" element={<PageWrapper><DigitalID /></PageWrapper>} />
-        <Route path="/verify" element={<PageWrapper><VerifyID /></PageWrapper>} />
-        <Route path="/verify/:id" element={<PageWrapper><VerifyID /></PageWrapper>} />
-        <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
-        <Route path="/wilderness" element={<PageWrapper><WildernessSafety /></PageWrapper>} />
-        <Route path="/wilderness-aid" element={<PageWrapper><WildernessAid /></PageWrapper>} />
-      </Routes>
+      <Suspense fallback={<div className="h-screen flex items-center justify-center bg-[#050505]"><div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" /></div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageWrapper><Login /></PageWrapper>} />
+          <Route path="/home" element={<PageWrapper><Landing /></PageWrapper>} />
+          <Route path="/planner" element={<PageWrapper><Planner /></PageWrapper>} />
+          <Route path="/digital-id" element={<PageWrapper><DigitalID /></PageWrapper>} />
+          <Route path="/verify" element={<PageWrapper><VerifyID /></PageWrapper>} />
+          <Route path="/verify/:id" element={<PageWrapper><VerifyID /></PageWrapper>} />
+          <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
+          <Route path="/wilderness" element={<PageWrapper><WildernessSafety /></PageWrapper>} />
+          <Route path="/wilderness-aid" element={<PageWrapper><WildernessAid /></PageWrapper>} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }

@@ -138,30 +138,16 @@ export default function MapView({ itinerary = [], mapStyle = "colorful" }) {
         zoom={defaultZoom}
         style={{ height: "100%", width: "100%", background: "#050505" }}
         scrollWheelZoom={true}
+        preferCanvas={true}
+        zoomControl={false}
       >
-        {mapStyle === "tactical" && (
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          />
-        )}
-        {mapStyle === "colorful" && (
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          />
-        )}
-        {mapStyle === "hybrid" && (
-          <>
-            <TileLayer
-              attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            />
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
-            />
-          </>
-        )}
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          updateWhenIdle={true}
+          updateWhenZooming={false}
+          keepBuffer={2}
+        />
 
         {itinerary.map((day, dIdx) =>
           (day.activities || []).map((act, aIdx) => (
