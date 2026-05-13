@@ -15,6 +15,19 @@ export default function BacktrackOverlay({ currentLocation }) {
     setHistory(points);
     
     if (!points || points.length === 0) {
+      if (currentLocation) {
+        // Demo Fallback: Simulate a safe point 200m away
+        const demoPoint = { 
+          lat: currentLocation.lat + 0.002, 
+          lon: currentLocation.lon + 0.002, 
+          online: true 
+        };
+        setTarget(demoPoint);
+        setIsActive(true);
+        speakGuidance("No history found. Simulating backtrack to the nearest safe perimeter for demonstration.");
+        toast.info("Demo Mode: Simulating target vector 200m North-East.");
+        return;
+      }
       toast.error("No movement history found. Unable to calculate backtrack vector.");
       return;
     }

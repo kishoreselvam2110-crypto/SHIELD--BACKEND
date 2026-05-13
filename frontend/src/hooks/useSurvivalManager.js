@@ -108,7 +108,7 @@ export const useSurvivalManager = () => {
 
   // 4. Location Breadcrumbs (Feature 5 foundation)
   useEffect(() => {
-    const interval = setInterval(() => {
+    const recordPoint = () => {
       navigator.geolocation.getCurrentPosition(pos => {
         saveLocationPoint({
           lat: pos.coords.latitude,
@@ -117,7 +117,10 @@ export const useSurvivalManager = () => {
           online: navigator.onLine
         });
       });
-    }, 30000); // Every 30s
+    };
+
+    recordPoint(); // Record immediately
+    const interval = setInterval(recordPoint, 30000); // Then every 30s
     return () => clearInterval(interval);
   }, []);
 

@@ -31,12 +31,19 @@ export default function DigitalID() {
     setLoading(true);
     setError("");
     try {
+      console.log("🛠️ SHIELD: Generating Secure ID...");
       const signedData = await signProfile(form);
-      setResult(signedData);
+      
+      if (!signedData || typeof signedData !== 'object') {
+        throw new Error("Invalid signature generated");
+      }
+
+      setResult({ ...signedData });
       localStorage.setItem("shield_id", JSON.stringify(signedData));
+      console.log("✅ SHIELD: ID Generated Successfully.");
     } catch (err) {
-      console.error("ID Sign Error:", err);
-      setError("Failed to sign ID. Storage access required.");
+      console.error("❌ SHIELD ID Sign Error:", err);
+      setError("Cryptographic verification failed. This can happen in private browsing or if storage is full.");
     } finally {
       setLoading(false);
     }
@@ -105,13 +112,15 @@ export default function DigitalID() {
                     className="flex flex-col items-center gap-8 w-full"
                   >
                     <div className="p-4 md:p-6 bg-white rounded-[2rem] shadow-[0_0_50px_rgba(255,255,255,0.2)] max-w-full">
-                      <QRCodeCanvas 
-                        value={`${window.location.origin}/verify?data=${encodeURIComponent(JSON.stringify(result))}`} 
-                        size={220}
-                        style={{ width: '100%', height: 'auto', maxWidth: '220px' }}
-                        level="M"
-                        includeMargin={false}
-                      />
+                      {result && (
+                        <QRCodeCanvas 
+                          value={`${window.location.origin}/verify?data=${encodeURIComponent(JSON.stringify(result))}`} 
+                          size={220}
+                          style={{ width: '100%', height: 'auto', maxWidth: '220px' }}
+                          level="M"
+                          includeMargin={false}
+                        />
+                      )}
                     </div>
                     <div className="text-center w-full">
                       <div className="flex items-center justify-center gap-2 mb-2">
