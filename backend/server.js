@@ -244,7 +244,7 @@ app.get("/api/places", async (req, res) => {
 app.post("/api/smart-trip", async (req, res) => {
   try {
     const { destination, days, budget, language } = req.body;
-    const cacheKey = `${destination}-${days}-${budget}-${language}`;
+    const cacheKey = `trip-v3-${destination}-${days}-${budget}-${language}`.toLowerCase();
     
     if (tripCache.has(cacheKey)) {
       console.log(`Serving trip from memory cache: ${cacheKey}`);
