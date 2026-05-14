@@ -59,7 +59,7 @@ export default function Planner() {
       }
     } catch (err) {
       console.error(err);
-      setError("Trip generation failed. Check backend connection.");
+      setError(err.response?.data?.message || "Tactical telemetry failed. Please provide a more specific destination.");
     } finally {
       setLoading(false);
     }

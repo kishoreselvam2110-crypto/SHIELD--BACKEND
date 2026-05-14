@@ -269,50 +269,57 @@ app.post("/api/smart-trip", async (req, res) => {
     let trip = await getTripPlan(destination, days, budget, language);
 
     if (!trip || !trip.itinerary || trip.itinerary.length < days) {
+      let baseLat = null;
+      let baseLon = null;
+      
+      const cityKey = destination.toLowerCase().split(',')[0].trim();
       const commonCities = {
         'kolkata': { lat: 22.5726, lon: 88.3639 },
         'paris': { lat: 48.8566, lon: 2.3522 },
         'london': { lat: 51.5074, lon: -0.1278 },
         'new york': { lat: 40.7128, lon: -74.0060 },
         'delhi': { lat: 28.6139, lon: 77.2090 },
-        'tokyo': { lat: 35.6762, lon: 139.6503 }
+        'tokyo': { lat: 35.6762, lon: 139.6503 },
+        'mumbai': { lat: 19.0760, lon: 72.8777 },
+        'sydney': { lat: -33.8688, lon: 151.2093 },
+        'berlin': { lat: 52.5200, lon: 13.4050 },
+        'rome': { lat: 41.9028, lon: 12.4964 },
+        'dubai': { lat: 25.2048, lon: 55.2708 },
+        'singapore': { lat: 1.3521, lon: 103.8198 }
       };
 
-      let baseLat = 22.5726; // Default to Kolkata for demo
-      let baseLon = 88.3639;
-      
-      const cityKey = destination.toLowerCase().split(',')[0].trim();
       if (commonCities[cityKey]) {
         baseLat = commonCities[cityKey].lat;
         baseLon = commonCities[cityKey].lon;
       }
 
       let generatedPlaces = [];
-      let cityFound = false;
-
       try {
         console.log(`🔍 SHIELD Geo-Vectoring: Resolving ${destination}...`);
         let destCoords = await getPlaces(destination);
         
-        // Fallback: If "Paris, france" fails, try just "Paris"
         if (destCoords.length === 0 && destination.includes(',')) {
-          console.log(`⚠️ Full query failed. Trying sub-vector: ${destination.split(',')[0]}`);
           destCoords = await getPlaces(destination.split(',')[0]);
         }
 
         if (destCoords.length > 0) {
           baseLat = parseFloat(destCoords[0].lat);
           baseLon = parseFloat(destCoords[0].lon);
-          cityFound = true;
           console.log(`✅ Destination Resolved: [${baseLat}, ${baseLon}]`);
-        } else {
-          console.warn(`❌ Could not resolve coordinates for ${destination}. Falling back to default sector.`);
         }
         
         const realPlaces = await getPlaces(`tourism in ${destination}`);
         generatedPlaces = realPlaces;
       } catch (osmErr) {
-        console.warn("⚠️ OSM Engine unreachable. Using geometric coordinate simulation.");
+        console.error("OSM Error:", osmErr);
+      }
+
+      // Final Check: If we STILL don't have coordinates, we cannot plan the trip.
+      if (baseLat === null || baseLon === null) {
+        return res.status(400).json({ 
+          error: "Strategic Intelligence Gap", 
+          message: `Unable to resolve coordinates for ${destination}. Please provide a more specific city or region.` 
+        });
       }
       
       const spotNames = ["Heritage Fort", "Ancient Temple", "Cultural Bazaar", "Royal Palace", "National Museum", "City Center Square", "Botanical Gardens", "Sunset Point", "Wildlife Sanctuary", "Art Gallery"];
