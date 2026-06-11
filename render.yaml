@@ -3,8 +3,8 @@ services:
     name: shield-backend
     env: node
     plan: free
-    # Fix: Just install (this will trigger the frontend build automatically)
-    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    # Fix: Use --legacy-peer-deps for frontend to bypass React 18/19 conflict with @tremor/react
+    buildCommand: npm install --prefix backend && npm install --legacy-peer-deps --prefix frontend && npm run build --prefix frontend
     # Fix: This is where we start the server
     startCommand: node backend/server.js
     healthCheckPath: /api/health
