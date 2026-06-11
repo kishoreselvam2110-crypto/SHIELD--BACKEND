@@ -11,7 +11,7 @@ export async function getPlaces(city) {
       limit: 10
     },
     headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      "User-Agent": "saviour-tourist-app"
     }
   });
 
@@ -29,7 +29,7 @@ export async function getPlaceDetails(placeName) {
       limit: 1
     },
     headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      "User-Agent": "saviour-tourist-app"
     }
   });
 

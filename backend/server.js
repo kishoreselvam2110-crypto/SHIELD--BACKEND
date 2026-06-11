@@ -244,7 +244,7 @@ app.get("/api/places", async (req, res) => {
 app.post("/api/smart-trip", async (req, res) => {
   try {
     const { destination, days, budget, language } = req.body;
-    const cacheKey = `trip-v3-${destination}-${days}-${budget}-${language}`.toLowerCase();
+    const cacheKey = `${destination}-${days}-${budget}-${language}`;
     
     if (tripCache.has(cacheKey)) {
       console.log(`Serving trip from memory cache: ${cacheKey}`);
@@ -269,57 +269,23 @@ app.post("/api/smart-trip", async (req, res) => {
     let trip = await getTripPlan(destination, days, budget, language);
 
     if (!trip || !trip.itinerary || trip.itinerary.length < days) {
-      let baseLat = null;
-      let baseLon = null;
+      console.log("AI failed or key missing. Attempting OSM data fetch...");
       
-      const cityKey = destination.toLowerCase().split(',')[0].trim();
-      const commonCities = {
-        'kolkata': { lat: 22.5726, lon: 88.3639 },
-        'paris': { lat: 48.8566, lon: 2.3522 },
-        'london': { lat: 51.5074, lon: -0.1278 },
-        'new york': { lat: 40.7128, lon: -74.0060 },
-        'delhi': { lat: 28.6139, lon: 77.2090 },
-        'tokyo': { lat: 35.6762, lon: 139.6503 },
-        'mumbai': { lat: 19.0760, lon: 72.8777 },
-        'sydney': { lat: -33.8688, lon: 151.2093 },
-        'berlin': { lat: 52.5200, lon: 13.4050 },
-        'rome': { lat: 41.9028, lon: 12.4964 },
-        'dubai': { lat: 25.2048, lon: 55.2708 },
-        'singapore': { lat: 1.3521, lon: 103.8198 }
-      };
-
-      if (commonCities[cityKey]) {
-        baseLat = commonCities[cityKey].lat;
-        baseLon = commonCities[cityKey].lon;
-      }
-
       let generatedPlaces = [];
-      try {
-        console.log(`🔍 SHIELD Geo-Vectoring: Resolving ${destination}...`);
-        let destCoords = await getPlaces(destination);
-        
-        if (destCoords.length === 0 && destination.includes(',')) {
-          destCoords = await getPlaces(destination.split(',')[0]);
-        }
+      let baseLat = 20.5937;
+      let baseLon = 78.9629;
 
+      try {
+        const destCoords = await getPlaces(destination);
         if (destCoords.length > 0) {
           baseLat = parseFloat(destCoords[0].lat);
           baseLon = parseFloat(destCoords[0].lon);
-          console.log(`✅ Destination Resolved: [${baseLat}, ${baseLon}]`);
         }
         
         const realPlaces = await getPlaces(`tourism in ${destination}`);
         generatedPlaces = realPlaces;
       } catch (osmErr) {
-        console.error("OSM Error:", osmErr);
-      }
-
-      // Final Check: If we STILL don't have coordinates, we cannot plan the trip.
-      if (baseLat === null || baseLon === null) {
-        return res.status(400).json({ 
-          error: "Strategic Intelligence Gap", 
-          message: `Unable to resolve coordinates for ${destination}. Please provide a more specific city or region.` 
-        });
+        console.warn("⚠️ OSM Engine unreachable. Using geometric coordinate simulation.");
       }
       
       const spotNames = ["Heritage Fort", "Ancient Temple", "Cultural Bazaar", "Royal Palace", "National Museum", "City Center Square", "Botanical Gardens", "Sunset Point", "Wildlife Sanctuary", "Art Gallery"];
@@ -441,34 +407,6 @@ app.post("/api/sos", (req, res) => {
   io.emit("new-alert", alertPayload);
   console.log("🔥 SOS ALERT BROADCASTED:", alertPayload);
   res.json({ success: true, payload: alertPayload });
-});
-
-/* =======================================================
-   SMART RISK ENGINE (Boosted)
-======================================================= */
-app.post("/api/safety-score", (req, res) => {
-  const { lat, lon, batteryLevel, time } = req.body;
-  let score = 100;
-
-  // 1. Check Geofence Proximity (Minus 15 points if near a danger zone)
-  for (const z of dangerZones) {
-    const d = getDistance(lat, lon, z.lat, z.lon);
-    if (d < z.radius + 1000) score -= 15; // Buffer zone
-  }
-
-  // 2. Battery Impact
-  if (batteryLevel < 20) score -= 30;
-  else if (batteryLevel < 50) score -= 10;
-
-  // 3. Time Impact (Higher risk at night)
-  const hour = new Date(time || Date.now()).getHours();
-  if (hour > 22 || hour < 5) score -= 20;
-
-  res.json({ 
-    success: true, 
-    score: Math.max(0, score),
-    status: score > 80 ? "SECURE" : score > 50 ? "CAUTION" : "HIGH_RISK"
-  });
 });
 
 /* =======================================================
@@ -596,28 +534,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Socket Disconnected:", socket.id));
 });
 
-// Serve Static Frontend Files
-const root = process.cwd();
-const distPath = path.join(root, "frontend", "dist");
-console.log("📂 PROD DEBUG: Root is", root);
-console.log("📂 PROD DEBUG: Serving static files from:", distPath);
-
-if (fs.existsSync(distPath)) {
-  console.log("✅ dist folder found!");
-} else {
-  console.error("❌ ERROR: dist folder NOT found at", distPath);
-}
-
-app.use(express.static(distPath));
-
 // Catch-all route to serve the Frontend's index.html (MUST BE LAST)
 app.use((req, res) => {
-  const indexPath = path.join(distPath, "index.html");
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send(`<h3>404: SHIELD Build Not Found</h3><p>Server looking in: <code>${distPath}</code></p>`);
-  }
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 const PORT = process.env.PORT || 3000;

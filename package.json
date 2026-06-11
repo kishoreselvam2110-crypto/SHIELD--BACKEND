@@ -3,7 +3,8 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
+    "install-all": "npm install --prefix frontend && npm install --prefix backend",
     "build": "npm run build --prefix frontend",
-    "install-all": "npm install --prefix frontend && npm install --prefix backend"
+    "start": "node backend/server.js"
   }
 }
